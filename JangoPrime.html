@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Fullscreen Autoplay</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: black; display: flex; justify-content: center; align-items: center; }
+        #play-button { position: absolute; z-index: 10; background: white; padding: 15px 30px; font-size: 20px; border: none; cursor: pointer; border-radius: 10px; }
+        #video-container { display: none; width: 100vw; height: 100vh; }
+        iframe { width: 100vw; height: 100vh; border: none; }
+    </style>
+</head>
+<body>
+    <button id="play-button">Start Video</button>
+    <div id="video-container">
+        <iframe id="yt-video" allowfullscreen allow="autoplay"></iframe>
+    </div>
+
+    <script>
+        document.getElementById("play-button").addEventListener("click", function() {
+            let button = document.getElementById("play-button");
+            let videoContainer = document.getElementById("video-container");
+            let iframe = document.getElementById("yt-video");
+
+            // Set YouTube embed URL with autoplay & API enabled
+            iframe.src = "https://www.youtube.com/embed/zImWAZmFR7s?enablejsapi=1&fs=1&modestbranding=1";
+
+            // Show video container & hide button
+            videoContainer.style.display = "block";
+            button.style.display = "none";
+
+            // Request fullscreen mode
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            } else if (iframe.mozRequestFullScreen) { // Firefox
+                iframe.mozRequestFullScreen();
+            } else if (iframe.webkitRequestFullscreen) { // Chrome, Safari, Opera
+                iframe.webkitRequestFullscreen();
+            } else if (iframe.msRequestFullscreen) { // IE/Edge
+                iframe.msRequestFullscreen();
+            }
+
+            // Wait for iframe to load, then play video
+            setTimeout(() => {
+                iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
